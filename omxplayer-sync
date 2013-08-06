@@ -29,7 +29,7 @@ TOLERANCE = 0.3
 ADJUST_OMXPLAYER = 0.2
 ADJUST_MASTER = 0.0
 ADJUST_SLAVE = 0.0
-SEEK_SIZE = 1
+SEEK_SIZE = 0.1
 
 REGEX_STATUS = re.compile(r"V :\s*([\d\.]+).*")
 REGEX_DONE = re.compile(r"have a nice day.*")
