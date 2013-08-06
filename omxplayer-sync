@@ -70,6 +70,7 @@ def read_position_master():
        filename_master = data[1]
 
 def play_file(filename, options, omxplayer_options):
+	print OMXPLAYER + ' '.join(omxplayer_options)
     process = pexpect.spawn('%s -s %s %s' % (
         OMXPLAYER, ' '.join(omxplayer_options), filename), timeout=0.01)
     wait_for_sync = False
@@ -182,9 +183,9 @@ def main():
     for argument in arguments:
         if argument.startswith('-'):
             omxplayer_options.append(argument)
-        else:
+		else:
             filenames.append(argument)
-
+		
     if options.slave:
         thread.start_new_thread(read_position_master,())
         sleep(0.1)
