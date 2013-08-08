@@ -144,6 +144,7 @@ def play_file_slave(filename, options, omxplayer_options):
     wait_after_sync = True
     position_local = 0.0
     adjust = ADJUST_OMXPLAYER + (options.master and ADJUST_MASTER or ADJUST_SLAVE)
+    wait_for_sync_time = time();
 
     if options.verbose:
         print "playing %s" % filename
@@ -192,9 +193,11 @@ def play_file_slave(filename, options, omxplayer_options):
             continue
 
         if wait_after_sync:
-            if (time() - wait_after_sync) > 5:
+            if (time() - wait_for_sync_time) > 5:
                 wait_after_sync = False
-
+                process.send('p')
+            else:
+                print("wait " + str(time() - wait_for_sync_time) + " seconds")
             continue
 
         if abs(deviation) > TOLERANCE \
@@ -211,7 +214,7 @@ def play_file_slave(filename, options, omxplayer_options):
                 elif abs(deviation > TOLERANCE) :
                     process.send('8') # 0.5 second seek
                 if options.verbose:
-                    print "seek forward..."
+                    print "seek forward... "+ str(deviation)
             elif position_local > (position_master + SEEK_SIZE * 2):
 
                 if abs(deviation)> 30.0:
@@ -223,10 +226,11 @@ def play_file_slave(filename, options, omxplayer_options):
                 elif abs(deviation > TOLERANCE) :
                     process.send('7') # 0.5 second seek
                 if options.verbose:
-                    print "seek backwards..."
+                    print "seek backwards... " + str(deviation)
             else:
                 process.send('p')
                 wait_for_sync = True
+                wait_for_sync_time = time();
             sleep(0.2)
 
     os.kill(-process.pid, 15)
