@@ -35,6 +35,11 @@ REGEX_STATUS = re.compile(r"V :\s*([\d\.]+).*")
 REGEX_DONE = re.compile(r"have a nice day.*")
 
 global position_master
+global position_local
+global process
+global verbose
+
+verbose = 1 ;
 position_master = 0.0
 
 global filename_master
@@ -46,10 +51,10 @@ class PassThroughOptionParser(OptionParser):
 	An unknown option pass-through implementation of OptionParser.
 
 	When unknown arguments are encountered, bundle with largs and try again,
-	until rargs is depleted.  
+	until rargs is depleted.
 
 	sys.exit(status) will still be called if a known argument is passed
-	incorrectly (e.g. missing arguments or bad argument types, etc.)		
+	incorrectly (e.g. missing arguments or bad argument types, etc.)
 	"""
 
     def _process_args(self, largs, rargs, values):
@@ -63,14 +68,60 @@ class PassThroughOptionParser(OptionParser):
 def slave_read_position_master():
     global position_master
     global filename_master
+    global process
 
+    sleep(1);
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
     sock.bind(('0.0.0.0', PORT))
 
+    print("GO!")
     while True:
         data = sock.recvfrom(1024)[0].split('%', 1)
+        print ("------" + str(data))
         position_master = float(data[0])
         filename_master = data[1]
+        deviation = position_master - position_local
+        if verbose:
+                 print "local: %.2f master: %.2f deviation: %.2f wait: %r" % (
+                    position_local, position_master, deviation, wait_for_sync)
+
+        if wait_for_sync:
+            if  abs(deviation) < TOLERANCE or deviation < 0 :
+                process.send('p')
+                if verbose:
+                    print "we are sync, play..."
+                wait_for_sync = False
+            continue
+
+        if abs(deviation) > TOLERANCE \
+            and position_local > 1.0 \
+            and position_master > 1.0 :
+            if position_local < position_master:
+                if abs(deviation)> 30.0:
+                    process.send('\x1B[C') # 30 second seek
+                elif abs(deviation > 2) :
+                    process.send('6') # 2 second seek
+                elif abs(deviation > 1) :
+                    process.send('4') # 1 second seek
+                elif abs(deviation > TOLERANCE) :
+                    process.send('8') # 0.5 second seek
+                if verbose:
+                    print "seek forward... "+ str(deviation)
+            elif position_local > (position_master + SEEK_SIZE * 2):
+                if abs(deviation)> 30.0:
+                     process.send('\x1B[D')
+                elif abs(deviation > 2) :
+                    process.send('5') # 2 second seek
+                elif abs(deviation > 1) :
+                    process.send('3') # 1 second seek
+                elif abs(deviation > TOLERANCE) :
+                    process.send('7') # 0.5 second seek
+                if verbose:
+                    print "seek backwards... " + str(deviation)
+            else:
+                process.send('p')
+                wait_for_sync = True
+            sleep(0.2)
 
 
 def play_file_master(filename, options, omxplayer_options):
@@ -138,14 +189,11 @@ def play_file_master(filename, options, omxplayer_options):
 
 def play_file_slave(filename, options, omxplayer_options):
     print OMXPLAYER + ' '.join(omxplayer_options)
+    global process
     process = pexpect.spawn('%s -s %s %s' % (
         OMXPLAYER, ' '.join(omxplayer_options), filename), timeout=0.01)
-    wait_for_sync = False
-    wait_after_sync = True
-    position_local = 0.0
     adjust = ADJUST_OMXPLAYER + (options.master and ADJUST_MASTER or ADJUST_SLAVE)
-    wait_for_sync_time = time();
-
+    global position_local
     if options.verbose:
         print "playing %s" % filename
 
@@ -176,53 +224,6 @@ def play_file_slave(filename, options, omxplayer_options):
             else:
                 position_local = float(process.match.group(1)) + adjust
         if eof: break
-
-
-        deviation = position_master - position_local
-        if options.verbose:
-            if( count % 5 == 0 ):
-                print "local: %.2f master: %.2f deviation: %.2f wait: %r" % (
-                    position_local, position_master, deviation, wait_for_sync)
-                count = 0
-
-        if wait_for_sync:
-            if  abs(deviation) < TOLERANCE or deviation < 0 :
-                process.send('p')
-                if options.verbose:
-                    print "we are sync, play..."
-                wait_for_sync = False
-            continue
-
-        if abs(deviation) > TOLERANCE \
-            and position_local > 1.0 \
-            and position_master > 1.0 :
-            sleep(0.2)
-            if position_local < position_master:
-                if abs(deviation)> 30.0:
-                    process.send('\x1B[C') # 30 second seek
-                elif abs(deviation > 2) :
-                    process.send('6') # 2 second seek
-                elif abs(deviation > 1) :
-                    process.send('4') # 1 second seek
-                elif abs(deviation > TOLERANCE) :
-                    process.send('8') # 0.5 second seek
-                if options.verbose:
-                    print "seek forward... "+ str(deviation)
-            elif position_local > (position_master + SEEK_SIZE * 2):
-                if abs(deviation)> 30.0:
-                     process.send('\x1B[D')
-                elif abs(deviation > 2) :
-                    process.send('5') # 2 second seek
-                elif abs(deviation > 1) :
-                    process.send('3') # 1 second seek
-                elif abs(deviation > TOLERANCE) :
-                    process.send('7') # 0.5 second seek
-                if options.verbose:
-                    print "seek backwards... " + str(deviation)
-            else:
-                process.send('p')
-                wait_for_sync = True
-            sleep(0.2)
 
     os.kill(-process.pid, 15)
     process.kill(15)
