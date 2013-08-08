@@ -155,8 +155,9 @@ def play_file_slave(filename, options, omxplayer_options):
         sys.exit(0)
 
     signal.signal(signal.SIGINT, kill_process)
-
+    count = 0
     while True:
+        count = count +1
         eof = False
         while True:
             index = process.expect([
@@ -179,24 +180,17 @@ def play_file_slave(filename, options, omxplayer_options):
 
         deviation = position_master - position_local
         if options.verbose:
-            print "local: %.2f master: %.2f deviation: %.2f wait: %r" % (
-                position_local, position_master, deviation, wait_for_sync)
+            if( count % 5 == 0 ):
+                print "local: %.2f master: %.2f deviation: %.2f wait: %r" % (
+                    position_local, position_master, deviation, wait_for_sync)
+                count = 0
 
         if wait_for_sync:
-            if deviation >= -0.1 and deviation < 0.1:
+            if  abs(deviation) < TOLERANCE or deviation < 0 :
                 process.send('p')
                 if options.verbose:
                     print "we are sync, play..."
                 wait_for_sync = False
-                wait_after_sync = time()
-
-            continue
-
-        if wait_after_sync:
-            if (time() - wait_for_sync_time) > 5:
-                wait_after_sync = False
-            else:
-                print("wait " + str(time() - wait_for_sync_time) + " seconds")
             continue
 
         if abs(deviation) > TOLERANCE \
@@ -215,7 +209,6 @@ def play_file_slave(filename, options, omxplayer_options):
                 if options.verbose:
                     print "seek forward... "+ str(deviation)
             elif position_local > (position_master + SEEK_SIZE * 2):
-
                 if abs(deviation)> 30.0:
                      process.send('\x1B[D')
                 elif abs(deviation > 2) :
@@ -229,7 +222,6 @@ def play_file_slave(filename, options, omxplayer_options):
             else:
                 process.send('p')
                 wait_for_sync = True
-                wait_for_sync_time = time();
             sleep(0.2)
 
     os.kill(-process.pid, 15)
