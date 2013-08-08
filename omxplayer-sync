@@ -25,7 +25,7 @@ from optparse import OptionParser, BadOptionError, AmbiguousOptionError
 
 OMXPLAYER = 'omxplayer'
 PORT = 1666
-TOLERANCE = 0.3
+TOLERANCE = 0.2
 ADJUST_OMXPLAYER = 0.0
 ADJUST_MASTER = 0.0
 ADJUST_SLAVE = 0.0
@@ -97,24 +97,26 @@ def slave_read_position_master():
             and position_local > 1.0 \
             and position_master > 1.0 :
             if deviation > 0:
-                #if abs(deviation)> 30.0:
-                #    process.send('\x1B[C') # 30 second seek
+                if abs(deviation)> 30.0:
+                    process.send('\x1B[C') # 30 second seek
                 #elif abs(deviation > 2) :
                 #    process.send('6') # 2 second seek
                 #elif abs(deviation > 1) :
                 #    process.send('4') # 1 second seek
                 #elif abs(deviation > TOLERANCE) :
+                else :
                     process.send('8') # 0.5 second seek
                 #if verbose:
                     print "seek forward... "+ str(deviation)
             elif deviation < 0:
-                #if abs(deviation)> 30.0:
-                #     process.send('\x1B[D')
+                if abs(deviation)> 30.0:
+                    process.send('\x1B[D')
                 #elif abs(deviation > 2) :
                 #    process.send('5') # 2 second seek
                 #elif abs(deviation > 1) :
                 #    process.send('3') # 1 second seek
                 #elif abs(deviation > TOLERANCE) :
+                else :
                     process.send('7') # 0.5 second seek
                 #if verbose:
                     print "seek backwards... " + str(deviation)
