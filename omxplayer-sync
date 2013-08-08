@@ -85,18 +85,18 @@ def slave_read_position_master():
                  print "local: %.2f master: %.2f deviation: %.2f wait: %r" % (
                     position_local, position_master, deviation, wait_for_sync)
 
-        if wait_for_sync:
-            if  abs(deviation) < TOLERANCE or deviation < 0 :
-                process.send('p')
-                if verbose:
-                    print "we are sync, play..."
-                wait_for_sync = False
-            continue
+        #if wait_for_sync:
+        #    if  abs(deviation) < TOLERANCE or deviation <= 0 :
+        #        process.send('p')
+        #        if verbose:
+        #            print "we are sync, play..."
+        #       wait_for_sync = False
+        #    continue
 
         if abs(deviation) > TOLERANCE \
             and position_local > 1.0 \
             and position_master > 1.0 :
-            if position_local < position_master:
+            if deviation > 0:
                 #if abs(deviation)> 30.0:
                 #    process.send('\x1B[C') # 30 second seek
                 #elif abs(deviation > 2) :
@@ -107,7 +107,7 @@ def slave_read_position_master():
                     process.send('8') # 0.5 second seek
                 #if verbose:
                     print "seek forward... "+ str(deviation)
-            elif position_local > (position_master + SEEK_SIZE * 2):
+            elif deviation < 0:
                 #if abs(deviation)> 30.0:
                 #     process.send('\x1B[D')
                 #elif abs(deviation > 2) :
@@ -118,10 +118,10 @@ def slave_read_position_master():
                     process.send('7') # 0.5 second seek
                 #if verbose:
                     print "seek backwards... " + str(deviation)
-            else:
-                process.send('p')
-                wait_for_sync = True
-                print "Wait " + str(deviation)
+            #else:
+            #    process.send('p')
+            #    wait_for_sync = True
+            #    print "Wait " + str(deviation)
 
 
 def play_file_master(filename, options, omxplayer_options):
