@@ -41,6 +41,7 @@ global verbose
 
 verbose = True ;
 position_master = 0.0
+position_local = 0.0
 position_global = 0.0
 global filename_master
 filename_master = ''
