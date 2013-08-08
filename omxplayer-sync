@@ -71,7 +71,6 @@ def slave_read_position_master():
     global filename_master
     global process
     global position_local
-    sleep(1);
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
     sock.bind(('0.0.0.0', PORT))
     wait_for_sync = False
@@ -151,7 +150,6 @@ def play_file_master(filename, options, omxplayer_options):
         pass
 
     while True:
-        sleep(1)
 	eof = False
         while True:
             index = process.expect([
@@ -178,6 +176,7 @@ def play_file_master(filename, options, omxplayer_options):
                 sock.send('%s%%%s' % (str(position_local), filename))
         except socket.error:
             pass
+        sleep(1);
 
     try:
         sock.close()
@@ -208,7 +207,6 @@ def play_file_slave(filename, options, omxplayer_options):
     signal.signal(signal.SIGINT, kill_process)
     count = 0
     while True:
-        count = count +1
         eof = False
         while True:
             index = process.expect([
