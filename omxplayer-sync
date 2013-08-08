@@ -119,7 +119,7 @@ def play_file_master(filename, options, omxplayer_options):
         if eof: break
 
         if options.verbose:
-            sys.stdout.write("local: %.2f %.0f\n" % (position_local, math.modf(position_local)[0] * 100 / 4))
+            sys.stdout.write("master: %.2f %.0f\n" % (position_local, math.modf(position_local)[0] * 100 / 4))
         try:
             if position_local != 0.0 :
                 sock.send('%s%%%s' % (str(position_local), filename))
@@ -247,7 +247,7 @@ def main():
             if options.slave:
                  play_file_slave(filename, options, omxplayer_options)
             if options.master:
-                 play_file_slave(filename, options, omxplayer_options)
+                 play_file_master(filename, options, omxplayer_options)
 
         if not options.loop: break
 
