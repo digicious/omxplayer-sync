@@ -39,9 +39,9 @@ global position_local
 global process
 global verbose
 
-verbose = 1 ;
+verbose = True ;
 position_master = 0.0
-
+position_global = 0.0
 global filename_master
 filename_master = ''
 
@@ -69,15 +69,15 @@ def slave_read_position_master():
     global position_master
     global filename_master
     global process
-
+    global position_local
     sleep(1);
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
     sock.bind(('0.0.0.0', PORT))
-
+    wait_for_sync = False
+    
     print("GO!")
     while True:
         data = sock.recvfrom(1024)[0].split('%', 1)
-        print ("------" + str(data))
         position_master = float(data[0])
         filename_master = data[1]
         deviation = position_master - position_local
@@ -150,7 +150,8 @@ def play_file_master(filename, options, omxplayer_options):
         pass
 
     while True:
-        eof = False
+        sleep(1)
+	eof = False
         while True:
             index = process.expect([
                 REGEX_STATUS,
