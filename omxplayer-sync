@@ -183,10 +183,11 @@ def play_file_master(filename, options, omxplayer_options):
         sock.close()
     except socket.error:
         print "Socket error on closing"
-
-    os.kill(process.pid, 15)
-    process.kill(15)
-
+    try:
+    	os.kill(process.pid, 15)
+    	process.kill(15)
+    except OSError :
+	print "Cannot kill the process"
 
 
 def play_file_slave(filename, options, omxplayer_options):
@@ -227,8 +228,11 @@ def play_file_slave(filename, options, omxplayer_options):
                 position_local = float(process.match.group(1)) + adjust
         if eof: break
 
-    os.kill(process.pid, 15)
-    process.kill(15)
+    try:
+        os.kill(process.pid, 15)
+        process.kill(15)
+    except OSError :
+	print "Cannot kill the process"
 
 
 def main():
