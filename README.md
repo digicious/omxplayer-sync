@@ -56,3 +56,13 @@ ADJUST_MASTER = 0.0
 ADJUST_SLAVE = 0.0
 SEEK_SIZE = 5
 ```
+
+
+f you just want to hide all console output during boot, you can make the following changes to /boot/cmdline.txt, so that just the raspberry logo is shown during boot and nothing else:
+
+Replace "console=tty1" by "console=tty3" to redirect boot messages to the third console.
+Add "loglevel=3" to disable non-critical kernel log messages.
+Hide the text cursor: "vt.global_cursor_default=0".
+To see the console output anyway, just press Alt+F3 during or after boot.
+
+You might also want to comment out the line in /etc/inittab that starts a getty process (the login prompt) on tty1.
