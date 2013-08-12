@@ -1,0 +1,66 @@
+#! /bin/sh
+# /etc/init.d/omxplayer_sync_master
+#
+
+# Some things that run always
+
+movie_file=/media/usb0/movie.mp4
+
+master_command="/home/pi/omxplayer-sync/omxplayer-sync -m --loop -v -x 255.255.255.255"
+master_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync -m --loop -v -x 255.255.255.255"
+slave_command="/home/pi/omxplayer-sync/omxplayer-sync -l --loop -v "
+slave_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync -l --loop -v"
+
+OUTPUT="/home/pi/omxplayer-sync.log"
+master_file="/boot/master.txt"
+kill_omx="/home/pi/omxplayer-sync/killOmx.sh"
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+    echo "Starting script omxplayer_sync "
+	if [ -f $movie_file ]
+	then
+		echo "movie exists" 
+	else
+		echo "movie doesn't exist !" 
+	fi
+
+	
+	if [ -f  $master_file ]
+	then
+		echo "Master"
+		$master_command $movie_file  > $OUTPUT
+	else
+		echo "slave"
+		$slave_command $movie_file > $OUTPUT
+	fi
+	
+    ;;
+  stop)
+    echo "Stopping script omxplayer_sync"
+    $kill_omx
+    ;;
+ console)
+    echo "Starting script omxplayer_sync_master console" 
+	if [ -f $movie_file ]
+	then
+		echo "movie exists" 
+	else
+		echo "movie doesn't exist !" 
+	fi
+
+	if [ -f $master_file ]
+	then
+		$master_command_verbose $movie_file 
+	else
+		$slave_command_verbose $movie_file 
+	fi
+	;;
+  *)
+    echo "Usage: /etc/init.d/omxplayer_sync_master {start|stop|console}"
+    exit 1
+    ;;
+esac
+
+exit 0
