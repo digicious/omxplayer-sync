@@ -6,14 +6,17 @@
 
 movie_file=/media/usb0/movie.mp4
 
-master_command="/home/pi/omxplayer-sync/omxplayer-sync -m --loop -v -x 255.255.255.255"
-master_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync -m --loop -v -x 255.255.255.255"
+master_command="/home/pi/omxplayer-sync/omxplayer-sync -m --loop -v -x 255.255.255.255 "
+master_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync -m --loop -v -x 255.255.255.255 "
 slave_command="/home/pi/omxplayer-sync/omxplayer-sync -l --loop -v "
-slave_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync -l --loop -v"
+slave_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync -l --loop -v "
 
 OUTPUT="/home/pi/omxplayer-sync.log"
 master_file="/boot/master.txt"
 kill_omx="/home/pi/omxplayer-sync/killOmx.sh"
+
+outputMovie="/home/pi/movie.mp4"
+
 
 # Carry out specific functions when asked to by the system
 case "$1" in
@@ -21,19 +24,20 @@ case "$1" in
     echo "Starting script omxplayer_sync "
 	if [ -f $movie_file ]
 	then
-		echo "movie exists" 
+		echo "movie exists on USB" 
+		cp $movie_file $outputMovie
 	else
-		echo "movie doesn't exist !" 
+		echo "movie doesn't exist on USB!" 
 	fi
 
 	
 	if [ -f  $master_file ]
 	then
 		echo "Master"
-		$master_command $movie_file  > $OUTPUT
+		$master_command $outputMovie  > $OUTPUT &
 	else
 		echo "slave"
-		$slave_command $movie_file > $OUTPUT
+		$slave_command $outputMovie > $OUTPUT &
 	fi
 	
     ;;
@@ -43,18 +47,19 @@ case "$1" in
     ;;
  console)
     echo "Starting script omxplayer_sync_master console" 
-	if [ -f $movie_file ]
-	then
-		echo "movie exists" 
-	else
-		echo "movie doesn't exist !" 
-	fi
-
+        if [ -f $movie_file ]
+        then
+                echo "movie exists on USB"
+                cp $movie_file $outputMovie
+        else
+                echo "movie doesn't exist on USB!"
+        fi
+	
 	if [ -f $master_file ]
 	then
-		$master_command_verbose $movie_file 
+		$master_command_verbose $outputMovie &
 	else
-		$slave_command_verbose $movie_file 
+		$slave_command_verbose $outputMovie &
 	fi
 	;;
   *)
