@@ -51,7 +51,13 @@ To see the console output anyway, just press Alt+F3 during or after boot.
 You might also want to comment out the line in /etc/inittab that starts a getty process (the login prompt) on tty1.
 
 Also, you can remove the pi logo during startup by changing the /boot/cmdline.txt 
-Just append logo.nologo  to the end of the first line. 
+Just append
+
+```
+logo.nologo  
+
+```
+at the end of the first line. 
 
 
 
