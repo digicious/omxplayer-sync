@@ -32,6 +32,15 @@ omxplayer -v -m -x 255.255.255.255 movie.mp4
 omxplayer -v -l movie.mp4
 ```
 
+Installation 
+-----
+
+```
+git clone https://github.com/digicious/omxplayer-sync
+cd omxplayer-sync
+./install.sh
+
+```
 
 Requirements
 ------------
