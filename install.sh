@@ -1,6 +1,10 @@
 #! /bin/sh
 
 sudo apt-get install usbmount
+wget https://bootstrap.pypa.io/get-pip.py
+sudo python get-pip.py
+pip install pexpect
+sudo pip install pexpect
 
 sudo update-rc.d -f omxplayer_sync_initd remove
 sudo cp  omxplayer_sync_initd /etc/init.d/omxplayer_sync_initd
