@@ -1,2 +1,2 @@
-#!/bin/bash
-sudo kill $(ps aux | grep "omx" | awk '{ print $2 }')
+sudo pkill python
+sudo pkill omx
