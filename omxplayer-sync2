@@ -5,9 +5,9 @@
 # Copyright 2014, Simon Josi
 # Simon Josi me(at)yokto(dot)net
 #
-# This program is free software; you can redistribute 
-# it and/or modify it under the terms of the GNU 
-# General Public License version 3 as published by 
+# This program is free software; you can redistribute
+# it and/or modify it under the terms of the GNU
+# General Public License version 3 as published by
 # the Free Software Foundation.
 #
 
@@ -40,10 +40,10 @@ class PassThroughOptionParser(OptionParser):
     An unknown option pass-through implementation of OptionParser.
 
     When unknown arguments are encountered, bundle with largs and try again,
-    until rargs is depleted.  
+    until rargs is depleted.
 
     sys.exit(status) will still be called if a known argument is passed
-    incorrectly (e.g. missing arguments or bad argument types, etc.)        
+    incorrectly (e.g. missing arguments or bad argument types, etc.)
     """
     def _process_args(self, largs, rargs, values):
         while rargs:
@@ -71,7 +71,7 @@ class PlayerInterface():
             print e
             sleep(5)
             return False
-        
+
         return True
 
     def initialize(self):
@@ -138,12 +138,9 @@ class OMXPlayerSync():
         if not len(self.playlist):
             sys.exit(0)
 
-        if not filter(lambda x: os.path.isfile(x), self.playlist):
-            print "ERROR: none of the supplied filenames are found"
-            sys.exit(1)
-        
+
         self.omxplayer_options.append("-o %s" % self.options.adev)
-        
+
         if not self.options.verbose:
             self.omxplayer_options.append('--no-osd')
 
@@ -172,7 +169,7 @@ class OMXPlayerSync():
         if not os.path.isfile(filename):
             if  self.options.verbose:
                 print "WARNING: %s file not found" % filename
-            return    
+            return
 
         self.filename = filename
         self.position_local = 0.0
@@ -195,11 +192,11 @@ class OMXPlayerSync():
                 self.increment_playlist_index()
                 break
 
-            if self.hangup_detected():
-                if self.options.slave:
-                    self.set_playlist_index()
-                print "WARNING: omxplayer hangup detected, respawning omxplayer"
-                break
+            #if self.hangup_detected():
+            #    if self.options.slave:
+            #        self.set_playlist_index()
+            #    print "WARNING: omxplayer hangup detected, respawning omxplayer"
+            #    break
 
             if self.options.master:
                 self.send_position_local()
@@ -288,7 +285,7 @@ class OMXPlayerSync():
             print "WARNING: unable to get current filename from master"
             sleep(5)
             return
-            
+
         try:
             self.playlist_index = self.playlist.index(self.filename_master)
         except:
