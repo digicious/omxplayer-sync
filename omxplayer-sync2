@@ -136,11 +136,7 @@ class OMXPlayerSync():
                 self.playlist.append(argument)
 
         if not len(self.playlist):
-            sys.exit(0)
-
-        if not filter(lambda x: os.path.isfile(x), self.playlist):
-            print "ERROR: none of the supplied filenames are found"
-            sys.exit(1)
+        
         
         self.omxplayer_options.append("-o %s" % self.options.adev)
         
@@ -156,14 +152,14 @@ class OMXPlayerSync():
             read_thread.daemon = True
             read_thread.start()
             sleep(0.5)
-            self.set_playlist_index()
+            #self.set_playlist_index()
 
         while True:
             self.play_file(self.playlist[self.playlist_index])
-            if not self.first_run and not self.options.loop and self.playlist_index == 0:
-                break
+            #if not self.first_run and not self.options.loop and self.playlist_index == 0:
+            #    break
 
-            self.first_run = False
+            #self.first_run = False
 
     def play_file(self, filename):
         if self.options.master:
@@ -191,15 +187,15 @@ class OMXPlayerSync():
             deviations = collections.deque(maxlen=50)
 
         while True:
-            if not self.read_position_local():
-                self.increment_playlist_index()
-                break
+           # if not self.read_position_local():
+           #     self.increment_playlist_index()
+           #     break
 
-            if self.hangup_detected():
-                if self.options.slave:
-                    self.set_playlist_index()
-                print "WARNING: omxplayer hangup detected, respawning omxplayer"
-                break
+            #if self.hangup_detected():
+            #    if self.options.slave:
+            #        self.set_playlist_index()
+            #    print "WARNING: omxplayer hangup detected, respawning omxplayer"
+             #   break
 
             if self.options.master:
                 self.send_position_local()
@@ -208,9 +204,9 @@ class OMXPlayerSync():
                         self.position_local, math.modf(self.position_local)[0]*100/4))
 
             if self.options.slave:
-                if self.filename != self.filename_master:
-                    self.set_playlist_index()
-                    break
+                #if self.filename != self.filename_master:
+                #    self.set_playlist_index()
+                #    break
 
                 deviation = self.position_master - self.position_local
                 deviations.append(deviation)
@@ -283,33 +279,31 @@ class OMXPlayerSync():
 
         return not eof
 
-    def set_playlist_index(self):
-        if self.filename_master == '':
-            print "WARNING: unable to get current filename from master"
-            sleep(5)
-            return
-            
-        try:
-            self.playlist_index = self.playlist.index(self.filename_master)
-        except:
-            print "WARNING: current master file '%s' is unavailable" % self.filename_master
+#    def set_playlist_index(self):
+#        if self.filename_master == '':
+ #           print "WARNING: unable to get current filename from master"
+ #           sleep(5)
+ #           return
+#            
+#        try:
+#            self.playlist_index = self.playlist.index(self.filename_master)
+#        except:
+#            print "WARNING: current master file '%s' is unavailable" % self.filename_master
 
-    def increment_playlist_index(self):
-        if len(self.playlist) == (self.playlist_index + 1):
-            self.playlist_index = 0
-        else:
-            self.playlist_index += 1
+#    def increment_playlist_index(self):
+#        if len(self.playlist) == (self.playlist_index + 1):
+#            self.playlist_index = 0
+#        else:
+#            self.playlist_index += 1
 
-    def hangup_detected(self):
-        self.position_local_oldage_count += 1
-        if self.position_local_oldage_count == 200:
-            if self.position_local_oldage == self.position_local:
-                return True
-
-            self.position_local_oldage = self.position_local
-            self.position_local_oldage_count = 0
-
-        return False
+#    def hangup_detected(self):
+#        self.position_local_oldage_count += 1
+#        if self.position_local_oldage_count == 200:
+#            if self.position_local_oldage == self.position_local:
+#                return True
+#            self.position_local_oldage = self.position_local
+#            self.position_local_oldage_count = 0
+#        return False
 
     def init_socket(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
