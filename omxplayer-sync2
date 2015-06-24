@@ -165,7 +165,9 @@ class OMXPlayerSync():
     def play_file(self, filename):
         if self.options.master:
             sleep(0.05)
-
+        if self.options.slave
+            sleep(1);
+            
         if not os.path.isfile(filename):
             if  self.options.verbose:
                 print "WARNING: %s file not found" % filename
