@@ -25,8 +25,8 @@ from time import sleep, time
 from optparse import OptionParser, BadOptionError, AmbiguousOptionError
 
 PORT = 1666
-TOLERANCE = 0.20
-SYNC_WINDOW = (-0.28, -0.25)
+TOLERANCE = 0.15
+SYNC_WINDOW = (-0.30, -0.25)
 OMXPLAYER = 'omxplayer'
 OMXPLAYER_REGEX_STATUS = re.compile(r"M:\s*(\d+) ")
 OMXPLAYER_REGEX_DONE = re.compile(r"have a nice day.*")
@@ -217,26 +217,26 @@ class OMXPlayerSync():
                     print "local: %.2f %.0f master: %.2f %.0f deviation: %.2f moving_deviation: %.2f filename: %s filename_master: %s wait: %r" % (
                         self.position_local, math.modf(self.position_local)[0]*100/4, self.position_master, math.modf(self.position_master)[0]*100/4, deviation, moving_deviation, self.filename, self.filename_master, wait_for_sync)
 
-                if wait_for_sync:
-                    small_moving_deviation = sum(list(deviations)[-5:]) / float(len(list(deviations)[-5:]))
-                    if small_moving_deviation >= SYNC_WINDOW[0] \
-                    and small_moving_deviation < SYNC_WINDOW[1]:
-                        if self.options.verbose:
-                            print "we are sync, play..."
-                        if not self.controller.playPause():
-                            break
-
-                        wait_for_sync = False
-                        wait_after_sync = time()
-
-                    continue
-
-                if wait_after_sync:
-                    if (time() - wait_after_sync) > 5:
-                         wait_after_sync = False
-
-                    continue
-
+                #if wait_for_sync:
+                #    small_moving_deviation = sum(list(deviations)[-5:]) / float(len(list(deviations)[-5:]))
+                #    if small_moving_deviation >= SYNC_WINDOW[0] \
+                #    and small_moving_deviation < SYNC_WINDOW[1]:
+                #        if self.options.verbose:
+                #            print "we are sync, play..."
+                #        if not self.controller.playPause():
+                #            break
+                #
+                #        wait_for_sync = False
+                #        wait_after_sync = time()
+                #
+                #    continue
+                #
+                #if wait_after_sync:
+                #    if (time() - wait_after_sync) > 5:
+                #         wait_after_sync = False
+                #
+                #    continue
+                #
                 if abs(moving_deviation) > TOLERANCE \
                 and self.position_local > sync_grace_time \
                 and self.position_master > sync_grace_time:
