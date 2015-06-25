@@ -6,10 +6,10 @@
 
 movie_file=/media/usb0/movie.mp4
 
-master_command="/home/pi/omxplayer-sync/omxplayer-sync -m --loop -v -x 255.255.255.255 "
-master_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync -m --loop -v -x 255.255.255.255 "
-slave_command="/home/pi/omxplayer-sync/omxplayer-sync -l --loop -v "
-slave_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync -l --loop -v "
+master_command="/home/pi/omxplayer-sync/omxplayer-sync2 -mu "
+master_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync2 -muv "
+slave_command="/home/pi/omxplayer-sync/omxplayer-sync2 -lu "
+slave_command_verbose="/home/pi/omxplayer-sync/omxplayer-sync2 -luv "
 
 OUTPUT="/home/pi/omxplayer-sync.log"
 master_file="/boot/master.txt"
