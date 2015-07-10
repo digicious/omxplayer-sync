@@ -17,6 +17,7 @@ kill_omx="/home/pi/omxplayer-sync/killOmx.sh"
 
 outputMovie="/home/pi/movie.mp4"
 
+rm /tmp/omx*
 
 # Carry out specific functions when asked to by the system
 case "$1" in
