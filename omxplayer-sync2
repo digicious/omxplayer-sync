@@ -290,7 +290,7 @@ class OMXPlayerSync():
         #    return
 
         try:
-            self.playlist_index = self.playlist.index(self.filename_master)
+            self.playlist_index = 0; #self.playlist.index(self.filename_master)
         except:
             print "WARNING: current master file '%s' is unavailable" % self.filename_master
 
