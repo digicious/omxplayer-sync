@@ -24,6 +24,8 @@ master_file="/boot/master.txt"
 kill_omx="/home/pi/omxplayer-sync/killOmx.sh"
 
 outputMovie="/home/pi/movie.mp4"
+outputFolder="/home/pi/movie.mp4"
+outputFile="movie.mp4"
 
 
 sudo rm /tmp/omx*
@@ -36,6 +38,7 @@ echo "starting OMXPlayerSync"
 # Carry out specific functions when asked to by the system
 case "$1" in
   start)
+    pushd $outputPath
     echo "Starting script omxplayer_sync "
 	if [ -f $movie_file ]
 	then
@@ -49,10 +52,10 @@ case "$1" in
 	if [ -f  $master_file ]
 	then
 		echo "Master"
-		su - pi -c "$master_command $outputMovie  > $OUTPUT &"
+		su - pi -c "$master_command $outputFile  > $OUTPUT &"
 	else
 		echo "slave"
-		su - pi -c "$slave_command $outputMovie > $OUTPUT &"
+		su - pi -c "$slave_command $outputFile > $OUTPUT &"
 	fi
 	
     ;;
