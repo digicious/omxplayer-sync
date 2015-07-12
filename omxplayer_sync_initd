@@ -1,8 +1,16 @@
-#! /bin/sh
-# /etc/init.d/omxplayer_sync_master
+#!/bin/sh
 #
-
-# Some things that run always
+### BEGIN INIT INFO
+# Provides:          omxplayer-sync
+# Required-Start:    $dhcp
+# Required-Stop:     $dhcp
+# Should-Start: 
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description:  omxplayer synchro
+# Description:
+### END INIT INFO
 
 movie_file=/media/usb0/movie.mp4
 
@@ -17,7 +25,13 @@ kill_omx="/home/pi/omxplayer-sync/killOmx.sh"
 
 outputMovie="/home/pi/movie.mp4"
 
-rm /tmp/omx*
+
+sudo rm /tmp/omx*
+echo "Waiting a bit"
+sleep  8
+echo "starting OMXPlayerSync"
+
+
 
 # Carry out specific functions when asked to by the system
 case "$1" in
@@ -35,10 +49,10 @@ case "$1" in
 	if [ -f  $master_file ]
 	then
 		echo "Master"
-		$master_command $outputMovie  > $OUTPUT &
+		su - pi -c "$master_command $outputMovie  > $OUTPUT &"
 	else
 		echo "slave"
-		$slave_command $outputMovie > $OUTPUT &
+		su - pi -c "$slave_command $outputMovie > $OUTPUT &"
 	fi
 	
     ;;
@@ -70,3 +84,4 @@ case "$1" in
 esac
 
 exit 0
+
