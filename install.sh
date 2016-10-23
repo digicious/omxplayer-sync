@@ -1,17 +1,17 @@
 #! /bin/sh
 
-sudo apt-get install usbmount
+sudo apt-get install usbmount hfsutil hfsplus hfsprogs 
 wget https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
 sudo pip install pexpect
 
 sudo apt-get remove omxplayer
-sudo rm -rf /usr/bin/omxplayer /usr/bin/omxplayer.bin /usr/lib/omxplayer
-sudo wget -O- http://yokto.net/0/omxplayer/omxplayer-3176db4.tar.bz2 | tar -C / -xjvf -
-sudo ln -sf /lib/arm-linux-gnueabihf/libpcre.so.3 /lib/arm-linux-gnueabihf/libpcre.so.1
-sudo wget -O /usr/bin/omxplayer-sync https://github.com/turingmachine/omxplayer-sync/raw/master/omxplayer-sync
-sudo chmod 0755 /usr/bin/omxplayer-sync
-sudo wget https://github.com/turingmachine/omxplayer-sync/raw/master/synctest.mp4
+#sudo rm -rf /usr/bin/omxplayer /usr/bin/omxplayer.bin /usr/lib/omxplayer
+#sudo wget -O- http://yokto.net/0/omxplayer/omxplayer-3176db4.tar.bz2 | tar -C / -xjvf -
+#sudo ln -sf /lib/arm-linux-gnueabihf/libpcre.so.3 /lib/arm-linux-gnueabihf/libpcre.so.1
+#sudo wget -O /usr/bin/omxplayer-sync https://github.com/turingmachine/omxplayer-sync/raw/master/omxplayer-sync
+#sudo chmod 0755 /usr/bin/omxplayer-sync
+#sudo wget https://github.com/turingmachine/omxplayer-sync/raw/master/synctest.mp4
 
 
 sudo update-rc.d -f omxplayer_sync_initd remove

@@ -43,7 +43,7 @@ case "$1" in
 	if [ -f $movie_file ]
 	then
 		echo "movie exists on USB" 
-		cp $movie_file $outputMovie
+#		cp $movie_file $outputMovie
 	else
 		echo "movie doesn't exist on USB!" 
 	fi
@@ -52,10 +52,10 @@ case "$1" in
 	if [ -f  $master_file ]
 	then
 		echo "Master"
-		su - pi -c "$master_command $outputFile  > $OUTPUT &"
+		su - pi -c "$master_command $movie_file  > $OUTPUT &"
 	else
 		echo "slave"
-		su - pi -c "$slave_command $outputFile > $OUTPUT &"
+		su - pi -c "$slave_command $movie_file > $OUTPUT &"
 	fi
 	
     ;;
